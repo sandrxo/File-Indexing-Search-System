@@ -1,0 +1,151 @@
+Pop Alessandro Cristian 311 CC - Tema 2 SDA
+
+1. Descrierea programului :
+programul simuleaza operatii specifice unui sistem de organizare a datelor in fisiere.
+Fiecare fisier este caracterizat de un id, un scor de relevanta si o
+lista de cuvinte-cheie.
+
+2. Structuri de date folosite:
+Lista dublu inlantuita : este folosita pentru a stoca o colectie fisiere.
+Fiecare nod contine un id, un scor de relevanta, o lista de cuvinte
+cheie (un ) si numarul de cuvinte cheie. Este implementata si functia de
+init care aloca dinamic o lista si ii initializeaza atat head-ul cat si
+tail-ul cu NULL. Faptul ca este dublu inlantuita este de folos pentru ca
+adaugarea sau stergerea se fac foarte simplu.
+
+Arbore de regasire : este folosit pentru a stoca cuvintele cheie.
+Fiecare nod reprezinta un caracter al cuvantului cheie, Este implementata si functia init
+care aloca dinamic un arbore. Fiecare nod poate sa aiba un numar maxim
+de 26 de fii, reprezentand alfabetul englez. In nodurile terminale se regasesc referinte
+catre fiecare fisier ce contine cuvantul citit luand de la root catre nodul
+terminal fiecare caracter legat unul de altul.
+
+Heap : este folosit in functia TOPK penru a se identifica usor
+cele mai relevante fisiere bazate pe scor. Este folosit un maxHeap. Este implementata
+si functia de init care ii ofera o capacitate maxima si aloca memoria
+array-ului unde vor fi retinute referinte catre fisiere.
+
+3. Comenzile principale :
+ADD : functia adauga un fisier in sistem alaturi de cuvintele cheie
+si scor-ul sau. Functia primeste lista de fisiere, arborele si toate informatiile necesare
+ale unui fisier( id, scor, numar de cuvinte cheie, cuvintele cheie). Se
+incepe prin verificarea daca fisierul a mai fost adaugat sau nu. In cazul
+in care este un fisier duplicat nu se mai adauga altfel, se trece
+la partea de adaugare. Se aloca un nod pentru lista de fisiere,
+se initializeaza cu id-ul si cu scorul, dar nu si cu numarul de
+cuvinte cheie si cuvintele cheie. Se adauga in lista iar apoi trecem la
+partea de procesare al fiecarui cuvant in parte. Trebuie sa se verifice inainte
+de fiecare adaugare daca cuvantul cheie de adaugat nu este un duplicat. Daca
+nu este duplicat, se adauga in lista, numarul de cuvinte creste iar apoi
+se foloseste functia insertTree(tree, cuvant, new_file) care insereaza cuvantul si in arbore. Functia
+insertTree functioneaza astfel : pornesc cu un pointer de la root si parcurg
+arborele in functie de indexul cuvantului de adaugat. Indexul este diferenta dintre caracterul
+curent si 'a'. Daca arborele este NULL pe nivelul urmator in acel
+index atunci nodul trebuie initializat, iar apoi se trece mai departe pana la
+capatul cuvantului. Cand se ajunge la capat, marchez ca nodul este unul terminal,
+cresc numarul de fisiere din nod, realloc memorie si adaug fisierul nodul terminal
+in ordine lexicografica folosind insertionSort. La finalul functiei ADD, se printeaza mesajul
+OK, semn ca functia s-a terminat cu succes.
+
+DEL : functia sterge un fisier cu un anumit id atat din
+lista de fisiere cat si din referintele nodurilor terminale corespunzatoare cuvintelor sale cheie.
+Functia primeste lista de fisiere, arborele si un id. Se incepe prin a
+cauta fisierul in lista de fisiere dupa id. In cazul in care nu
+s-a gasit fisierul, functia printeaza NOT FOUND, altfel, se continua prin a sterge
+referintele fisierului din cuvintele in care se afla. Se foloseste functia void
+delete_from_tree(Tree root, char *cuvant, int level, File_Node *file), o functie recursiva
+de stergere a referintelor unui fisier, dar si a cuvintelor in cazul in
+care acesta nu mai contine niciun fisier sau nu mai are fii. Functia
+delete_from_tree functioneaza astfel: se parcurge caracter cu caracter cuvantul in mod recursiv,
+crescand levelul si pointand spre fiul corespunzator indexului, pana ajunge la capatul cuvantului.
+Apoi se cauta fisierul care se vrea a fi sters, iar in momentul
+gasirii toate celelalte fisiere din referinta sunt shiftate si numarul de fisiere scade.
+De fiecare data cand se iese din recursie, adica pentru fiecare nod(de
+jos in sus) se verifica daca este nod terminal, iar daca acesta nu este,
+se verifica daca are fii. Daca nu mai are fii, si nu este
+terminal atunci nodul este degeaba astfel se da free. Dupa ce a fost
+apelata functia delete_from_tree de cate ori a fost necesar, se elimina nodul
+aferent fisierului si din lista de fisiere si se da free la memoria
+alocata. La finalul functiei DEL, se printeaza mesajul OK, semn ca functia
+s-a terminat cu succes.
+
+ADDKW : functia adauga un cuvant-cheie unui fisier existent. Functia primeste lista
+de fisiere, arborele, un id si un cuvant. Se incepe prin a
+se cauta fisierul in lista de fisiere. Daca acesta nu s-a gasit,
+se afiseaza NOT FOUND. Daca fisierul a fost gasit se verifica daca acesta
+contine deja cuvantul pe care dorim sa-l adaugam, in cazul in care este
+deja adaugat, se afiseaza OK. Daca se trece de aceste intrebari, se
+trece la adaugarea propriu zisa a cuvantului. Numarul de cuvinte din nodul liste
+de fisiere care contine fisierul creste, se realoca memorie pentru lista de cuvinte
+din nod, se adauga cuvantul iar apoi folosinc functia insertTree, se adauga
+cuvantul si in arbore. (functia insertTree a fost explicata la operatia ADD).
+La finalul functiei ADDKW, se printeaza mesajul OK, semn ca functia s-a
+terminat cu succes.
+
+DELKW : functia sterge un cuvant-cheie dintr-un fisier existent. Functia primeste lista
+de fisiere, arborele, un id si un cuvant. Se incepe prin a
+se cauta fisierul in lista de fisiere. Daca acesta nu s-a gasit,
+se afiseaza NOT FOUND. Daca fisierul a fost gasit, se cauta cuvantul
+in lista de cuvinte a fisierului. Daca nu a fost gasit, atunci se
+afiseaza OK, altfel se foloseste functia delete_from_tree pentru a sterge cuvantul din
+arbore. (functia delete_from_tree a fost explicata la operatia DEL). La finalul functiei
+DELKW, se printeaza mesajul OK, semn ca functia s-a terminat cu succes.
+
+FIND : functia afiseaza toate fisierele ce contin un anumit cuvant. Functia primeste
+arborele si un cuvant. Se parcurge arborele folosind aceeasi idee, se gaseste
+cate un index pentru fiecare caracter care este egal cu diferenta dintre caracterul
+curent si 'a', si se parcurge arborele in jos. Daca se incearca
+accesarea unui nod NULL, inseamna ca cuvantul nu exista in arbore si se
+afiseaza mesajul EMPTY. Dupa ce am parcurs , se verifica daca nodul
+la care am ajuns este unul terminal, iar in caz pozitiv, se printeaza
+numarul de fisiere urmat de id-urile din lista de referinte. Cerinta sugereaza
+printarea in ordine lexicografica a id-urilor dar din moment ce in functia insertTree,
+adaugarea se face in mod lexicografic, nu mai este nevoie de o sortare.
+
+TOPK : functia primeste un cuvant-cheie si o valoare k, iar pe baza
+lor se afiseaza cele mai relevate k fisiere asociate cuvantului respectiv. Se
+incepe prin a parcurge arborele folosind aceeasi idee, pana ajungem la un nod
+terminal. Se verifica daca este un nod terminal, iar in cazul in care
+nu e terminal, se printeaza EMPTY. Mai departe se initializeaza heap-ul folosind
+functia initH. Capacitatea maxima este numarul de fisiere din nodul terminal. Apoi
+se insereaza in heap cate un fisier, folosin functia insertH. Functia insertH,
+insereaza un element pe ultima pozitie iar apoi, pentru a forma maxHeap-ul se
+urca elementul, dand swap cu parintele sau, pana se ajunge in root sau
+pana cand elementul curent este mai mic decat parintele sau (compararea se face
+folosind functia compareFiles care compara 2 fisiere in functie de scor si il
+returneaza pe cel mai relevant). Dupa insertie, se poate gasi maximul foarte
+usor prin apelarea functiei extract de cate ori este nevoie/posibil. Functia de
+extragere retine un pointer rez catre root-ul heap-ului care contine elementul maxim,
+apoi se punde pe prima pozitie elementul de pe ultima pozitie, se scade
+numarul de fisiere existent in heap si se apeleaza functia heapify care porneste
+de sus in jos si verifica elementul curent cu stanga si drepta si
+da swap pana cand niciunul dintre fii elementului curent nu este mai mare
+decat el. La final se retuneaza rez (pointer catre un fisier) si
+se printeaza id-ul.
+
+PRINT : functia afiseaza toate cuvintele cheie existente in arbore in ordine lexicografa.
+Functia primeste arborele, un cuvant si un nivel (cuvantul este un buffer pentru
+a forma cuvantiele de afisat). Functia PRINT este recursiva si face DFS pe
+arbore. Conditia de oprire este ca nodul curent sa fie NULL. Apoi
+se verifica daca nodul este terminal, caz in care se adauga terminatorul de
+sir '\0' si se afiseaza cuvantul-cheie format alaturi de numarul de fisiere
+asociate si id-ul fisierelor (aceste doua informatii sunt gasite in nodul terminal).
+Daca nodul nu este terminal atunci se intra intr-un for unde pentru fiecare
+valoare diferita de NULL, se adauga litera in buffer si se autoapeleaza functia.
+
+PREFIX : functia primeste un prefix si determina toate fisierele ce contin cel putin
+un cuvant-cheie ce incepe cu prefixul dat. Functia primeste arborele si un
+prefix. Se parcurge arborele cautand prefixul pana ajung la ultimul caracter. Apoi
+imi aloc un pointer de pointeri la un nod de fisiere cu o
+capacitate maxima cap, care imi va servi drept rezultat. Mai departe de
+apeleaza functia find_prefix_files. Aceasta functie este similara cu functia PRINT, dar cu
+mici schimbari. Conditia de oprire este ca nodul curent sa fie NULL.
+Apoi se verifica daca nodul este terminal, caz in care se compara fiecare
+nod deja adaugat in vectorul rezultat cu fisierele din nodul terminal (se cauta duplicate). Daca
+pentru fisierul curent nu s-a gasit duplicat, fisierul se adauga in vectorul
+rezultat folosind insertion sort. Fisierele trebuie afisate in ordine lexicografica asa ca la fiecare
+adaugare vectorul va fi sortat. Daca nodul nu este terminal atunci se intra intr-un for unde
+pentru fiecare valoare diferita de NULL, se autoapeleaza functia. La intoarcerea in
+functia PREFIX, in rezultat se vor afla toate fisierele care contin acel
+prefix. La final se verifica daca au fost adaugate fisiere si se afiseaza lungimea lui 
+si id-urile din elementele vectorului.
