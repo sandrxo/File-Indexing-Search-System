@@ -1,7 +1,5 @@
-Pop Alessandro Cristian 311 CC - Tema 2 SDA
-
 1. Descrierea programului :
-programul simuleaza operatii specifice unui sistem de organizare a datelor in fisiere.
+Programul simuleaza operatii specifice unui sistem de organizare a datelor in fisiere.
 Fiecare fisier este caracterizat de un id, un scor de relevanta si o
 lista de cuvinte-cheie.
 
